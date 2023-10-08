@@ -55,6 +55,7 @@ string convertSpecial(int special) {
 
 string convertTens(int tens) {
     switch (tens) {
+        case 1:return "dix";
         case 2:return "vingt";
         case 3:return "trente";
         case 4:return "quarante";
