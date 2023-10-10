@@ -20,7 +20,7 @@ string hundredsToText(int hundreds, bool isBeforeThousand);
 
 string numberToText(long long int number);
 
-string agregator(long long int decimal, long int fractional);
+string agregator(long long int decimal, long long int fractional);
 
 string isNumberInRange(long double amount);
 
@@ -141,8 +141,7 @@ string numberToText(long long int number) {
     return numberText;
 }
 
-string agregator(long long int decimal, long int fractional) {
-
+string agregator(long long int decimal, long long int fractional) {
     string result;
     string beforeComma = numberToText(decimal);
     string afterComma = numberToText(fractional);
@@ -158,7 +157,6 @@ string agregator(long long int decimal, long int fractional) {
 }
 
 long double roundFractional(long double amount) {
-
     return round(amount * 100) / 100;
 }
 
@@ -170,9 +168,9 @@ long long int separator(long double amount, bool isDecimal) {
     if (isDecimal) {
         return static_cast<long long int>(decimalPart);
     } else {
-        fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
+        fractionalPart = roundFractional(fractionalPart);  // added to fix rounding error of c++
         fractionalPart *= 100;
-        return fractionalPart;
+        return static_cast<long long int>(fractionalPart);
     }
 }
 
@@ -191,7 +189,7 @@ string isNumberInRange(long double amount) {
 
 
 string montantEnToutesLettres(long double montant) {
-    if (isNumberInRange(montant) != "") {
+    if (isNumberInRange(montant).empty()) {
         return isNumberInRange(montant);
     }
     return agregator(separator(montant, true), separator(montant, false));
