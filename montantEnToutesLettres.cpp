@@ -1,7 +1,6 @@
 #include "montantEnToutesLettres.h"
 #include <cmath>
 
-//# TODO : ask if okay to use English as their func are named in french
 using namespace std;
 
 
@@ -15,9 +14,9 @@ string convertSpecial(int special);
 
 string convertTens(int tens);
 
-string tensToText(int smallInt);
+string tensToText(int tens);
 
-string hundredsToText(int hundred, bool mille_after);
+string hundredsToText(int hundreds, bool isBeforeThousand);
 
 string numberToText(long long int number);
 
@@ -28,87 +27,58 @@ string isNumberInRange(long double amount);
 
 string convertUnit(int unit) {
     switch (unit) {
-        case 0:
-            return "zero";
-        case 1:
-            return "un";
-        case 2:
-            return "deux";
-        case 3:
-            return "trois";
-        case 4:
-            return "quatre";
-        case 5:
-            return "cinq";
-        case 6:
-            return "six";
-        case 7:
-            return "sept";
-        case 8:
-            return "huit";
-        case 9:
-            return "neuf";
-        default:
-            return "";
+        case 0:return "zero";
+        case 1:return "un";
+        case 2:return "deux";
+        case 3:return "trois";
+        case 4:return "quatre";
+        case 5:return "cinq";
+        case 6:return "six";
+        case 7:return "sept";
+        case 8:return "huit";
+        case 9:return "neuf";
+        default:return "";
     }
 }
 
 string convertSpecial(int special) {
     switch (special) {
-        case 10:
-            return "dix";
-        case 11:
-            return "onze";
-        case 12:
-            return "douze";
-        case 13:
-            return "treize";
-        case 14:
-            return "quatorze";
-        case 15:
-            return "quinze";
-        case 16:
-            return "seize";
-        default:
-            return "";
+        case 10:return "dix";
+        case 11:return "onze";
+        case 12:return "douze";
+        case 13:return "treize";
+        case 14:return "quatorze";
+        case 15:return "quinze";
+        case 16:return "seize";
+        default:return "";
     }
 }
 
 string convertTens(int tens) {
     switch (tens) {
-        case 1:
-            return "dix";
-        case 2:
-            return "vingt";
-        case 3:
-            return "trente";
-        case 4:
-            return "quarante";
-        case 5:
-            return "cinquante";
-        case 6:
-            return "soixante";
-        case 7:
-            return "septante";
-        case 8:
-            return "huitante";
-        case 9:
-            return "nonante";
-        default:
-            return "";
+        case 1:return "dix";
+        case 2:return "vingt";
+        case 3:return "trente";
+        case 4:return "quarante";
+        case 5:return "cinquante";
+        case 6:return "soixante";
+        case 7:return "septante";
+        case 8:return "huitante";
+        case 9:return "nonante";
+        default:return "";
     }
 }
 
-string tensToText(int smallInt) {
+string tensToText(int tens) {
 //    0-99
-    if (smallInt < 10) {
-        return convertUnit(smallInt);
-    } else if (smallInt <= 16) {
-        return convertSpecial(smallInt);
+    if (tens < 10) {
+        return convertUnit(tens);
+    } else if (tens <= 16) {
+        return convertSpecial(tens);
     }
 
-    int quotient = smallInt / 10;
-    int rest = smallInt % 10;
+    int quotient = tens / 10;
+    int rest = tens % 10;
 
     if (rest == 0) {
         return convertTens(quotient);
@@ -118,16 +88,16 @@ string tensToText(int smallInt) {
     }
 }
 
-string hundredsToText(int hundred, bool mille_after = false) {
+string hundredsToText(int hundreds, bool isBeforeThousand = false) {
 //    0-999
-    int quotient = hundred / 100;
-    int rest = hundred % 100;
+    int quotient = hundreds / 100;
+    int rest = hundreds % 100;
 
     if (quotient == 0) {
-        return tensToText(hundred);
+        return tensToText(hundreds);
     }
 
-    string cent = (quotient > 1 && rest == 0 && !mille_after ? "cents" : "cent");
+    string cent = (quotient > 1 && rest == 0 && !isBeforeThousand ? "cents" : "cent");
     string tens = (rest == 0 ? "" : "-" + tensToText(rest));
     if (quotient == 1) {
         return cent + tens;
@@ -136,38 +106,39 @@ string hundredsToText(int hundred, bool mille_after = false) {
     }
 }
 
-const int one_billion = 1e9,
-        one_million = 1e6,
-        one_thousand = 1e3;
+const int oneBillion = 1e9,
+        oneMillion = 1e6,
+        oneThousand = 1e3;
 
 string numberToText(long long int number) {
-    string number_text;
+//    0-999'999'999'999
+    string numberText;
 
-    int order = number / one_billion;
-    long int rest = number - order * one_billion;
+    int order = number / oneBillion;
+    long int rest = number - order * oneBillion;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
+        numberText += hundredsToText(order) + "-milliard" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
     }
 
-    order = rest / one_million;
-    rest -= order * one_million;
+    order = rest / oneMillion;
+    rest -= order * oneMillion;
     if (order >= 1) {
-        number_text += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
+        numberText += hundredsToText(order) + "-million" + (order > 1 ? "s" : "") + (rest != 0 ? "-" : " de");
     }
 
-    order = rest / one_thousand;
-    rest -= order * one_thousand;
+    order = rest / oneThousand;
+    rest -= order * oneThousand;
     if (order == 1) {
-        number_text = number_text + "mille" + (rest != 0 ? "-" : "");
+        numberText = numberText + "mille" + (rest != 0 ? "-" : "");
     } else if (order >= 1) {
-        number_text += hundredsToText(order, true) + "-mille" + (rest != 0 ? "-" : "");
+        numberText += hundredsToText(order, true) + "-mille" + (rest != 0 ? "-" : "");
     }
 
     if (rest >= 1 or number == 0) {
-        number_text += hundredsToText(rest);
+        numberText += hundredsToText(rest);
     }
 
-    return number_text;
+    return numberText;
 }
 
 string agregator(long long int decimal, long int fractional) {
@@ -184,7 +155,6 @@ string agregator(long long int decimal, long int fractional) {
         return beforeComma + (decimal <= 1 ? " franc et " : " francs et ") + afterComma +
                (fractional <= 1 ? " centime" : " centimes");
     }
-    return "ERROR";
 }
 
 long double roundFractional(long double amount) {
