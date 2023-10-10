@@ -6,7 +6,7 @@ using namespace std;
 
 long double roundFractional(long double amount);
 
-long long separator(long double amount, bool decimalOrFractional);
+long long separator(long double amount, bool isDecimal);
 
 string convertUnit(int unit);
 
@@ -163,12 +163,11 @@ long double roundFractional(long double amount) {
 }
 
 
-long long int separator(long double amount, bool decimalOrFractional) {
-    // Fractional == False,  Decimal == True
+long long int separator(long double amount, bool isDecimal) {
     long double decimalPart;
     long double fractionalPart = modf(roundFractional(amount), &decimalPart);
 
-    if (decimalOrFractional) {
+    if (isDecimal) {
         return static_cast<long long int>(decimalPart);
     } else {
         fractionalPart = roundFractional(fractionalPart);//added for fix rounding error of c++
